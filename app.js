@@ -7,6 +7,7 @@ import cors from 'cors';
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
 import apiRouter from './routes/api.js';
+import authRouter from './routes/auth.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -26,5 +27,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api', apiRouter);
+app.use('/signup', authRouter);
 
 export default app;
