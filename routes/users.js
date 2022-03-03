@@ -1,18 +1,34 @@
 import express, { response } from 'express';
 import bcryptjs from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 var router = express.Router();
-const JWT_SECRET = 'aalsdfkijqnm.alsdflizswi@aasdf&^2sdff'
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+// Middleware for redirection after authentication
+const isAuth = (req, res, next) => {
+  if(req.session.isAuth) {
+    next()
+  } else {
+    res.redirect('/signin')
+  }
+}
+
+// trying to use isAuth boolean for redirectrion after authentication
+router.get('/', isAuth, function(req, res) {
+  res.render('/');
 });
 
 router.post('/signup', async function(req, res) {
   try{
       const {username, email, password: plainTextPass} = req.body;
+
+      let user = await req.db.User.findOne({email});
+
+      // Can't register with the same email
+      // TO DO: Not actually redirecting 
+      if (user) {
+        return res.redirect('/signup')
+      }
+
       const password = await bcryptjs.hash(plainTextPass, 10);
       const newUser = new req.db.User({ // ? 
           username: username,
@@ -47,12 +63,15 @@ router.post("/signin", async function(req, res) {
   console.log(user)
   if (!user) { return res.json({ status: 'error', error: 'Invalid username/password'}) }
 
+  // Authenticate password 
   if (await bcryptjs.compare(req.body.password, user.password)) {
-    const token = jwt.sign( {id: user._id, username: user.username, email: user.email }, JWT_SECRET )
     session.username = user.username;
     session.email = user.email;
-    return res.send("Welcome, " + session.username)
-    
+
+    console.log(session)
+    session.isAuth = true;
+    // TODO: Suppose to redirect to some other pages
+    res.send("Welcome, " + session.username);
   } else {
     req.session.destroy()
     res.send('Invalid username/password')
