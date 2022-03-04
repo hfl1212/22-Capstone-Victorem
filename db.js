@@ -10,13 +10,13 @@ async function dbConnect() {
   console.log("connected to the database!")
 
   const postSchema = new mongoose.Schema({
-    petName: String,
-    petType: String,
+    pet_name: String,
+    pet_type: String,
     description: String,
     start_date: Date,
     end_date: Date,
-    email: String // change to userID later
-    // img: ?
+    user_id: String, // change to userID later
+    img: String
   })
 
   const userSchema = new mongoose.Schema({

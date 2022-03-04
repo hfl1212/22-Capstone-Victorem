@@ -3,16 +3,15 @@ var router = express.Router();
 
 router.get('/posts', async function(req, res, next) {
     try{
-        console.log("backend working")
         let allPosts = await req.db.Post.find()
         let results = await Promise.all(allPosts.map(async (post) => {
             let result = {}
-            result.petName = post.petName
-            result.petType = post.petType
-            result.start_date = post.start_date
-            result.end_date = post.end_date
+            result.pet_name = post.pet_name
+            result.pet_type = post.pet_type
+            result.start_date = new Date(post.start_date.getFullYear(), post.start_date.getMonth(),post.start_date.getDate())
+            result.end_date = new Date(post.end_date.toDateString())
             result.description = post.description
-            // result.imgUrl = post.imgUrl
+            result.img = post.img
             return result;
         }))
         res.send(results)
@@ -28,12 +27,14 @@ router.post('/posts', async function(req, res) {
 //     } else{
         try{
             const newPost = new req.db.Post({
-                petName: req.body.petName,
-                petType: req.body.petType,
+                pet_name: req.body.pet_name,
+                pet_type: req.body.pet_type,
                 start_date: req.body.start_date,
                 end_date: req.body.end_date,
-                description: req.body.description
+                description: req.body.description,
+                img: req.body.img
             })
+            console.log(newPost)
             await newPost.save();
             let statusInfo = {'status': 'success'}
             res.send(statusInfo)
