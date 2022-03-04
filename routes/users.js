@@ -1,17 +1,39 @@
-import express from 'express';
+import express, { response } from 'express';
+import bcryptjs from 'bcryptjs';
+
 var router = express.Router();
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+// Middleware for redirection after authentication
+const isAuth = (req, res, next) => {
+  if(req.session.isAuth) {
+    next()
+  } else {
+    res.redirect('/signin')
+  }
+}
+
+// trying to use isAuth boolean for redirectrion after authentication
+router.get('/', isAuth, function(req, res) {
+  res.render('/');
 });
 
 router.post('/signup', async function(req, res) {
   try{
+      const {username, email, password: plainTextPass} = req.body;
+
+      let user = await req.db.User.findOne({email});
+
+      // Can't register with the same email
+      // TO DO: Not actually redirecting 
+      if (user) {
+        return res.redirect('/signup')
+      }
+
+      const password = await bcryptjs.hash(plainTextPass, 10);
       const newUser = new req.db.User({ // ? 
-          username: req.body.username,
-          email: req.body.email,
-          password: req.body.password
+          username: username,
+          email: email,
+          password: password
       })
       await newUser.save();
       let statusInfo = {'status': 'success'}
@@ -24,6 +46,7 @@ router.post('/signup', async function(req, res) {
 })
 
 router.post("/signin", async function(req, res) {
+    
   let session = req.session
 
   if(session.userid){
@@ -31,21 +54,27 @@ router.post("/signin", async function(req, res) {
     return
   }
   const authUser = {
-    email: req.body.email,
-    password: req.body.password
+    email: req.body.email
   }
-  let user = await req.db.User.find(authUser)
+  console.log("Request user")
+  console.log(authUser)
+  let user = await req.db.User.findOne(authUser)
+  console.log("User Found")
+  console.log(user)
+  if (!user) { return res.json({ status: 'error', error: 'Invalid username/password'}) }
 
-  if(user[0]) {
-    // session.userid = user._id.toString()
-    session.username = user[0].username
-    session.email= user[0].email
+  // Authenticate password 
+  if (await bcryptjs.compare(req.body.password, user.password)) {
+    session.username = user.username;
+    session.email = user.email;
+
     console.log(session)
-    res.send("Welcome, " + session.username)
-  }else { 
-    //not start session
+    session.isAuth = true;
+    // TODO: Suppose to redirect to some other pages
+    res.send("Welcome, " + session.username);
+  } else {
     req.session.destroy()
-    res.send("wrong login info")
+    res.send('Invalid username/password')
   }
 })
 
