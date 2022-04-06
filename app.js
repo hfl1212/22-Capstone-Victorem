@@ -5,7 +5,11 @@ import logger from 'morgan';
 import cors from 'cors';
 import sessions from 'express-session';
 import bodyParser from 'body-parser';
-import {default as connectMongoDBSession} from 'connect-mongodb-session'
+import {default as connectMongoDBSession} from 'connect-mongodb-session';
+import passport from 'passport';
+
+
+import flash from 'express-flash';
 
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
@@ -14,6 +18,8 @@ import db from './db.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+
+import {User, Post} from './models/model.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -44,6 +50,9 @@ app.use(sessions({
     store: SessionStore
 }))
 
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use( function (req, res, next) {
     req.db = db;
