@@ -1,13 +1,49 @@
 import express, { response } from 'express';
 import bcryptjs from 'bcryptjs';
+import passportlocal from 'passport-local';
+import passport from 'passport';
 
 var router = express.Router();
 
-// Middleware for redirection after authentication
-const isAuth = (req, res, next) => {
-  if(req.session.isAuth) {
-    next()
+import { User } from "../models/model.js";
+
+var LocalStrategy = passportlocal.Strategy;
+
+passport.serializeUser(function(user, done) {
+  done(null, user._id);
+});
+
+passport.deserializeUser(function (id, done) {
+  User.findById(id, function (err, user) {
+    done(err, user);
+  });
+});
+
+passport.use(new LocalStrategy(
+  function (email, password, done) {
+    User.findOne({email})
+    .then(user => {
+      if (!user) {
+        return done(null, false, {message: "Email is not registered"})
+      }
+    });
+    bcryptjs.compare(password, user.password, (err, isMatch) => {
+      if (err) throw err;
+      if (isMatch) {
+        return done(null, user);
+      } else {
+        return done(null, false, {message: "Password incorrect"})
+      }
+    })
+  }
+));
+
+// Users need to be signed in to see some pages
+function isAuth(req, res, next) {
+  if (req.isAuthenticated()) {
+    next();
   } else {
+    req.flash('error', 'You need to be signed in to visit')
     res.redirect('/signin')
   }
 }
@@ -21,67 +57,44 @@ router.post('/signup', async function(req, res) {
   try{
       const {username, email, password: plainTextPass} = req.body;
 
-      let user = await req.db.User.findOne({email});
-
-      // Can't register with the same email
-      // TO DO: Not actually redirecting 
+      let user = await User.findOne({email});
+    
       if (user) {
-        return res.redirect('/signup')
+        req.flash('error', 'Sorry, email has already been registered.');
+        console.log("Sorry, email has been registered.")
+        return res.redirect('/signin');
+      } else if (email == "" || plainTextPass == "") {
+        req.flash('error', 'Please fill out all the fields.');
+        console.log("Please fill out all the fields.")
+        res.redirect('/signup');
+      } else {
+        const password = await bcryptjs.hash(plainTextPass, 10);
+        const newUser = new User({
+            username: username,
+            email: email,
+            password: password
+        })
+        await newUser.save();
+        req.flash('info', 'Account made, please log in...');
+        console.log("Account made, please log in...")
+        res.redirect('/signin');
       }
-
-      const password = await bcryptjs.hash(plainTextPass, 10);
-      const newUser = new req.db.User({ // ? 
-          username: username,
-          email: email,
-          password: password
-      })
-      await newUser.save();
-      let statusInfo = {'status': 'success'}
-      res.send(statusInfo)
   } catch(err){
+      console.log("There is an error")
       let statusInfo = {'status': 'error'}
       statusInfo.error = err
-      res.send(statusInfo)
+      res.send(err)
   }
 })
 
-router.post("/signin", async function(req, res) {
-    
-  let session = req.session
+router.post("/signin", passport.authenticate('local', { failureRedirect: '/', failureMessage: true}), function(req, res) {
+  res.status(200).send("Welcome, " + req.body.username);
+});
 
-  if(session.userid){
-    res.send("Error: You are already logged in as " + session.username)
-    return
-  }
-  const authUser = {
-    email: req.body.email
-  }
-  console.log("Request user")
-  console.log(authUser)
-  let user = await req.db.User.findOne(authUser)
-  console.log("User Found")
-  console.log(user)
-  if (!user) { return res.json({ status: 'error', error: 'Invalid username/password'}) }
-
-  // Authenticate password 
-  if (await bcryptjs.compare(req.body.password, user.password)) {
-    session.username = user.username;
-    session.email = user.email;
-
-    console.log(session)
-    session.isAuth = true;
-    // TODO: Suppose to redirect to some other pages
-    res.send("Welcome, " + session.username);
-  } else {
-    req.session.destroy()
-    res.send('Invalid username/password')
-  }
-})
-
-router.post("/signout", function(req, res, next) {
-  req.session.destroy()
-  res.send("you are logged out")
-})
+router.post("/signout", function(req, res) {
+  req.logOut();
+  res.redirect('/login');
+});
 
 
 export default router;
