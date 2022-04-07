@@ -1,5 +1,4 @@
 import express, { response } from 'express';
-import bcryptjs from 'bcryptjs';
 import passportlocal from 'passport-local';
 import passport from 'passport';
 
@@ -9,34 +8,9 @@ import { User } from "../models/model.js";
 
 var LocalStrategy = passportlocal.Strategy;
 
-passport.serializeUser(function(user, done) {
-  done(null, user._id);
-});
-
-passport.deserializeUser(function (id, done) {
-  User.findById(id, function (err, user) {
-    done(err, user);
-  });
-});
-
-passport.use(new LocalStrategy(
-  function (email, password, done) {
-    User.findOne({email})
-    .then(user => {
-      if (!user) {
-        return done(null, false, {message: "Email is not registered"})
-      }
-    });
-    bcryptjs.compare(password, user.password, (err, isMatch) => {
-      if (err) throw err;
-      if (isMatch) {
-        return done(null, user);
-      } else {
-        return done(null, false, {message: "Password incorrect"})
-      }
-    })
-  }
-));
+passport.use(new LocalStrategy({usernameField: 'email'}, User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // Users need to be signed in to see some pages
 function isAuth(req, res, next) {
@@ -59,25 +33,37 @@ router.post('/signup', async function(req, res) {
 
       let user = await User.findOne({email});
     
-      if (user) {
+      if (user) { // User found, redirecting to signin page
         req.flash('error', 'Sorry, email has already been registered.');
         console.log("Sorry, email has been registered.")
         return res.redirect('/signin');
-      } else if (email == "" || plainTextPass == "") {
+      } else if (email == "" || plainTextPass == "") { // All fields should be filled
         req.flash('error', 'Please fill out all the fields.');
         console.log("Please fill out all the fields.")
         res.redirect('/signup');
+      } else if (!email.includes("@uw.edu")) { // Should use UW email for registration
+        req.flash("Please register with UW email.")
+        console.log("Please register with UW email.")
+        res.redirect('/signup')
+      } else if (plainTextPass.length < 6) { // Password should be longer than 6
+        req.flash("Password length should be longer than 6.");
+        console.log("Password length should be longer than 6");
+        res.redirect('signup');
       } else {
-        const password = await bcryptjs.hash(plainTextPass, 10);
         const newUser = new User({
             username: username,
-            email: email,
-            password: password
+            email: email
         })
-        await newUser.save();
+        User.register(newUser, plainTextPass, function(err, user) {
+          if (err) {
+            res.json({success:false, message:"Your account could not be saved. Error: ", err}) 
+          } else {
+            res.json({success:true, message:"Your account is saved. Error: "}) 
+          }
+        })
+        //await newUser.save();
         req.flash('info', 'Account made, please log in...');
         console.log("Account made, please log in...")
-        res.redirect('/signin');
       }
   } catch(err){
       console.log("There is an error")
@@ -87,8 +73,10 @@ router.post('/signup', async function(req, res) {
   }
 })
 
-router.post("/signin", passport.authenticate('local', { failureRedirect: '/', failureMessage: true}), function(req, res) {
-  res.status(200).send("Welcome, " + req.body.username);
+router.post("/signin", passport.authenticate('local', {failureRedirect: '/'}), function(req, res) {
+  // Needs to redirect to either Profile page of the user, or Landing page
+  // Currently not redirecting to anywhere
+  res.redirect('/');
 });
 
 router.post("/signout", function(req, res) {
