@@ -1,13 +1,23 @@
 import express, { response } from 'express';
-import bcryptjs from 'bcryptjs';
+import passportlocal from 'passport-local';
+import passport from 'passport';
 
 var router = express.Router();
 
-// Middleware for redirection after authentication
-const isAuth = (req, res, next) => {
-  if(req.session.isAuth) {
-    next()
+import { User } from "../models/model.js";
+
+var LocalStrategy = passportlocal.Strategy;
+
+passport.use(new LocalStrategy({usernameField: 'email'}, User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// Users need to be signed in to see some pages
+function isAuth(req, res, next) {
+  if (req.isAuthenticated()) {
+    next();
   } else {
+    req.flash('error', 'You need to be signed in to visit')
     res.redirect('/signin')
   }
 }
@@ -21,64 +31,58 @@ router.post('/signup', async function(req, res) {
   try{
       const {username, email, password: plainTextPass} = req.body;
 
-      let user = await req.db.User.findOne({email});
-
-      // Can't register with the same email
-      // TO DO: Not actually redirecting 
-      if (user) {
-        return res.redirect('/signup')
-      }
-
-      const password = await bcryptjs.hash(plainTextPass, 10);
-      const newUser = new req.db.User({ // ? 
-          username: username,
-          email: email,
-          password: password
-      })
-      await newUser.save();
-      res.json({'status': 'success'})
-  } catch(err){
-    res.json({"status": "error", "error": err})
-  }
-})
-
-router.post("/signin", async function(req, res) {
+      let user = await User.findOne({email});
     
-  let session = req.session
-
-  if(session.userid){
-    res.send("Error: You are already logged in as " + session.username)
-    return
-  }
-  const authUser = {
-    email: req.body.email
-  }
-  console.log("Request user")
-  console.log(authUser)
-  let user = await req.db.User.findOne(authUser)
-  console.log("User Found")
-  console.log(user)
-  if (!user) { return res.json({ status: 'error', error: 'Invalid username/password'}) }
-
-  // Authenticate password 
-  if (await bcryptjs.compare(req.body.password, user.password)) {
-    session.username = user.username;
-    session.email = user.email;
-
-    console.log(session)
-    session.isAuth = true;
-    // TODO: Suppose to redirect to some other pages
-    res.send("Welcome, " + session.username);
-  } else {
-    req.session.destroy()
-    res.send('Invalid username/password')
+      if (user) { // User found, redirecting to signin page
+        req.flash('error', 'Sorry, email has already been registered.');
+        console.log("Sorry, email has been registered.")
+        return res.redirect('/signin');
+      } else if (email == "" || plainTextPass == "") { // All fields should be filled
+        req.flash('error', 'Please fill out all the fields.');
+        console.log("Please fill out all the fields.")
+        res.redirect('/signup');
+      } else if (!email.includes("@uw.edu")) { // Should use UW email for registration
+        req.flash("Please register with UW email.")
+        console.log("Please register with UW email.")
+        res.redirect('/signup')
+      } else if (plainTextPass.length < 6) { // Password should be longer than 6
+        req.flash("Password length should be longer than 6.");
+        console.log("Password length should be longer than 6");
+        res.redirect('signup');
+      } else {
+        const newUser = new User({
+            username: username,
+            email: email
+        })
+        User.register(newUser, plainTextPass, function(err, user) {
+          if (err) {
+            res.json({success:false, message:"Your account could not be saved. Error: ", err}) 
+          } else {
+            res.json({success:true, message:"Your account is saved. Error: "}) 
+          }
+        })
+        //await newUser.save();
+        req.flash('info', 'Account made, please log in...');
+        console.log("Account made, please log in...")
+      }
+  } catch(err){
+      console.log("There is an error")
+      let statusInfo = {'status': 'error'}
+      statusInfo.error = err
+      res.send(err)
   }
 })
 
-router.post("/signout", function(req, res, next) {
-  req.session.destroy()
-  res.send("you are logged out")
-})
+router.post("/signin", passport.authenticate('local', {failureRedirect: '/'}), function(req, res) {
+  // Needs to redirect to either Profile page of the user, or Landing page
+  // Currently not redirecting to anywhere
+  res.redirect('/');
+});
+
+router.post("/signout", function(req, res) {
+  req.logOut();
+  res.redirect('/login');
+});
 
 
 export default router;
