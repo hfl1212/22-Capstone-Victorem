@@ -4,7 +4,7 @@ import mongoose from "mongoose"
 dbConnect().catch(err => console.log(err))
 
 let db = {}
-const mongoURI = "mongodb+srv://me:victorem@cluster0.jaf1k.mongodb.net/victorem?retryWrites=true&w=majority";
+// const mongoURI = "mongodb+srv://me:victorem@cluster0.jaf1k.mongodb.net/victorem?retryWrites=true&w=majority";
 
 async function dbConnect() {
   await mongoose.connect("mongodb+srv://me:victorem@cluster0.jaf1k.mongodb.net/victorem?retryWrites=true&w=majority")
@@ -16,7 +16,7 @@ async function dbConnect() {
     description: String,
     start_date: Date,
     end_date: Date,
-    user_id: String, // change to userID later
+    user_id: String, 
     img: String
   })
 

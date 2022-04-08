@@ -36,12 +36,9 @@ router.post('/signup', async function(req, res) {
           password: password
       })
       await newUser.save();
-      let statusInfo = {'status': 'success'}
-      res.send(statusInfo)
+      res.json({'status': 'success'})
   } catch(err){
-      let statusInfo = {'status': 'error'}
-      statusInfo.error = err
-      res.send(statusInfo)
+    res.json({"status": "error", "error": err})
   }
 })
 

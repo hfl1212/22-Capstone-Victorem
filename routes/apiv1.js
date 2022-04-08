@@ -4,19 +4,9 @@ var router = express.Router();
 router.get('/posts', async function(req, res, next) {
     try{
         let allPosts = await req.db.Post.find()
-        let results = await Promise.all(allPosts.map(async (post) => {
-            let result = {}
-            result.pet_name = post.pet_name
-            result.pet_type = post.pet_type
-            result.start_date = new Date(post.start_date.getFullYear(), post.start_date.getMonth(),post.start_date.getDate())
-            result.end_date = new Date(post.end_date.toDateString())
-            result.description = post.description
-            result.img = post.img
-            return result;
-        }))
-        res.send(results)
+        res.json(allPosts)
     } catch(err){
-        res.send("Error: " + err)
+        res.json({"status": "error", "error": err})
     }
 });
 
@@ -34,14 +24,11 @@ router.post('/posts', async function(req, res) {
                 description: req.body.description,
                 img: req.body.img
             })
-            console.log(newPost)
             await newPost.save();
             let statusInfo = {'status': 'success'}
             res.send(statusInfo)
         } catch(err){
-            let statusInfo = {'status': 'error'}
-            statusInfo.error = err
-            res.send(statusInfo)
+            res.json({"status": "error", "error": err})
         }
 //     }
 });
