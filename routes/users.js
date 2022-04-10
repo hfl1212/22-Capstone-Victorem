@@ -76,12 +76,12 @@ router.post('/signup', async function(req, res) {
 router.post("/signin", passport.authenticate('local', {failureRedirect: '/'}), function(req, res) {
   // Needs to redirect to either Profile page of the user, or Landing page
   // Currently not redirecting to anywhere
-  res.redirect('/');
+  res.json({status: "success", username: req.user.username});
 });
 
 router.post("/signout", function(req, res) {
   req.logOut();
-  res.redirect('/login');
+  res.json({status: "success"});
 });
 
 
