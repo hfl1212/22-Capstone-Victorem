@@ -13,9 +13,9 @@ const postSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   username: String,
   email: {type: String, required: true, unique: true},
-  petID: [String]
+  pets: [String],
   // profile picture
-  // contact
+  contact: Object
 })
 
 const petSchema = new mongoose.Schema({
