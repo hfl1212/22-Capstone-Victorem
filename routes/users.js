@@ -22,7 +22,7 @@ function isAuth(req, res, next) {
   }
 }
 
-// trying to use isAuth boolean for redirectrion after authentication
+// trying to use isAuth for redirectrion after authentication
 router.get('/', isAuth, function(req, res) {
   res.render('/');
 });
@@ -71,12 +71,12 @@ router.post('/signup', async function(req, res) {
 router.post("/signin", passport.authenticate('local', {failureRedirect: '/'}), function(req, res) {
   // Needs to redirect to either Profile page of the user, or Landing page
   // Currently not redirecting to anywhere
-  res.json({status: "success", message: "Successfully signed in"});
+  res.json({status: "success", username: req.user.username, email: req.user.email});
 });
 
 router.post("/signout", function(req, res) {
   req.logOut();
-  res.redirect('/login');
+  res.json({status: "success"});
 });
 
 

@@ -13,13 +13,11 @@ import flash from 'express-flash';
 
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
-import apiRouter from './routes/apiv1.js';
+import apiRouter from './routes/posts.js';
 import db from './db.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-
-import {User, Post} from './models/model.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -38,7 +36,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser("secretCode"));
 app.use(bodyParser.json());
 
 const oneDay = 1000 * 60 * 60 * 24;

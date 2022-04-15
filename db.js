@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
-import {User, Post} from "./models/model.js";
+import {User, Post, Pet} from "./models/model.js";
 
 let db = {}
-const mongoURI = "mongodb+srv://me:victorem@cluster0.jaf1k.mongodb.net/victorem?retryWrites=true&w=majority";
+// const mongoURI = "mongodb+srv://me:victorem@cluster0.jaf1k.mongodb.net/victorem?retryWrites=true&w=majority";
 
 async function dbConnect() {
   await mongoose.connect("mongodb+srv://me:victorem@cluster0.jaf1k.mongodb.net/victorem?retryWrites=true&w=majority")
@@ -10,6 +10,7 @@ async function dbConnect() {
 
   db.Post = Post;
   db.User = User;
+  db.Pet = Pet;
 
 }
 
