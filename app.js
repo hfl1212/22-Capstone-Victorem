@@ -37,7 +37,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser("secretCode"));
 app.use(bodyParser.json());
 
 const oneDay = 1000 * 60 * 60 * 24;

@@ -22,10 +22,10 @@ function isAuth(req, res, next) {
   }
 }
 
-// trying to use isAuth boolean for redirectrion after authentication
-// router.get('/', isAuth, function(req, res) {
-//   res.render('/');
-// });
+// trying to use isAuth for redirectrion after authentication
+router.get('/', isAuth, function(req, res) {
+  res.render('/');
+});
 
 router.post('/signup', async function(req, res) {
   try{
@@ -34,21 +34,17 @@ router.post('/signup', async function(req, res) {
       let user = await User.findOne({email});
     
       if (user) { // User found, redirecting to signin page
-        req.flash('error', 'Sorry, email has already been registered.');
+        //req.flash('error', 'Sorry, email has already been registered.');
         console.log("Sorry, email has been registered.")
-        return res.redirect('/signin');
       } else if (email == "" || plainTextPass == "") { // All fields should be filled
-        req.flash('error', 'Please fill out all the fields.');
+        //req.flash('error', 'Please fill out all the fields.');
         console.log("Please fill out all the fields.")
-        res.redirect('/signup');
       } else if (!email.includes("@uw.edu")) { // Should use UW email for registration
-        req.flash("Please register with UW email.")
+        //req.flash("Please register with UW email.")
         console.log("Please register with UW email.")
-        res.redirect('/signup')
       } else if (plainTextPass.length < 6) { // Password should be longer than 6
-        req.flash("Password length should be longer than 6.");
+        //req.flash("Password length should be longer than 6.");
         console.log("Password length should be longer than 6");
-        res.redirect('signup');
       } else {
         const newUser = new User({
             username: username,
@@ -62,14 +58,13 @@ router.post('/signup', async function(req, res) {
         })
         User.register(newUser, plainTextPass, function(err, user) {
           if (err) {
-            res.json({success:false, message:"Your account could not be saved. Error: ", err}) 
-          } else {
-            res.json({success:true, message:"Your account is saved. Error: "}) 
+            res.json({status: "error", message:"Your account could not be saved. Error: ", err}) 
           }
         })
         //await newUser.save();
-        req.flash('info', 'Account made, please log in...');
+        //req.flash('info', 'Account made, please log in...');
         console.log("Account made, please log in...")
+        res.json({status: "success", message: "Account made, please log in..."})
       }
   } catch(err){
       console.log("There is an error")
