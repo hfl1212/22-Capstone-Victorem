@@ -1,21 +1,30 @@
 import express from 'express';
-import db from '../db.js';
 var router = express.Router();
 
 router.get('/', async function(req, res){
     if(!req.isAuthenticated()){
         res.json({"status": "error", "error": "not logged in"})
     } else {
+        let userID
+        if(req.query.user == undefined) {
+            userID = req.user._id
+        } else{
+            userID = req.query.user
+        }
         try {
-            let user = await req.db.User.findById(req.user._id)
+            let user = await req.db.User.findById(userID)
+            let pets = [{}]
+            if(user.pets.length > 0) {
+                pets[0] = await req.db.Pet.findById(user.pets[0])
+            }
             let userInfo = {
                 username: user.username,
-                contact: user.contact
+                contact: user.contact,
+                pets: pets
             }
-            let pet = await req.db.Pet.findById(user.pets[0]._id)
-            res.json({"status": "success", user: userInfo, pet: pet})
+            res.json({"status": "success", "userInfo": userInfo})
         } catch (error) {
-            res.json({"status": "error", "error": error})
+            res.json({"status": "error", "error": "User not found!"})
         }
     }
 })
@@ -28,27 +37,26 @@ router.post('/', async function(req, res){
             let user = await req.db.User.findById(req.user._id)
             user.username = req.body.username
             user.contact = req.body.contact
+
+            let newPetInfo = req.body.pets[0]
+            let pet;
+            if(user.pets.length === 0) { // if user added a new pet
+                pet = new req.db.Pet(newPetInfo)
+                user.pets.push(pet._id)
+                pet.userID = req.user._id
+            } else { // if user is modifying existing pet
+                pet = await req.db.Pet.findById(user.pets[0])
+                pet.name = newPetInfo.name
+                pet.type = newPetInfo.type
+                pet.breed = newPetInfo.breed
+                pet.size = newPetInfo.size
+                pet.gender = newPetInfo.gender
+                pet.age = newPetInfo.age
+            }
+            await pet.save()
             await user.save()
             res.json({"status": "success"})
         } catch (error) {
-            res.json({"status": "error", "error": error})
-        }
-    }
-})
-
-router.patch('/', async function(req, res){
-    if(!req.isAuthenticated()){
-        res.json({"status": "error", "error": "not logged in"})
-    } else{
-        try{
-            if(req.body.updateType === "user"){
-                await db.User.update({"_id": req.user._id},{$set: req.body.updateInfo})
-            } else {
-                let user = await db.User.findById(req.user._id)
-                await db.Pet.update({"_id": user.pet[0]._id},{$set: req.body.updateInfo})
-            }
-            res.json({"status": "success"})
-        } catch (error){
             res.json({"status": "error", "error": error})
         }
     }

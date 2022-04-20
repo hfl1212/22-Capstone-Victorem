@@ -1,10 +1,11 @@
 import express, { response } from 'express';
 import passportlocal from 'passport-local';
 import passport from 'passport';
+import { User } from "../models/model.js";
+
+// This route handles all actions related to user authentication.
 
 var router = express.Router();
-
-import { User } from "../models/model.js";
 
 var LocalStrategy = passportlocal.Strategy;
 
@@ -12,7 +13,6 @@ passport.use(new LocalStrategy({usernameField: 'email'}, User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Users need to be signed in to see some pages
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) {
     next();
@@ -23,9 +23,9 @@ function isAuth(req, res, next) {
 }
 
 // trying to use isAuth boolean for redirectrion after authentication
-router.get('/', isAuth, function(req, res) {
-  res.render('/');
-});
+// router.get('/', isAuth, function(req, res) {
+//   res.render('/');
+// });
 
 router.post('/signup', async function(req, res) {
   try{
@@ -52,7 +52,13 @@ router.post('/signup', async function(req, res) {
       } else {
         const newUser = new User({
             username: username,
-            email: email
+            email: email,
+            pets: [],
+            contact: {
+              snap: '',
+              facebook:'',
+              instagram:''
+            }
         })
         User.register(newUser, plainTextPass, function(err, user) {
           if (err) {
@@ -76,13 +82,13 @@ router.post('/signup', async function(req, res) {
 router.post("/signin", passport.authenticate('local', {failureRedirect: '/'}), function(req, res) {
   // Needs to redirect to either Profile page of the user, or Landing page
   // Currently not redirecting to anywhere
-  res.json({status: "success", username: req.user.username});
+  console.log(req.session)
+  res.json({status: "success", user: req.user});
 });
 
-router.post("/signout", function(req, res) {
+router.get("/signout", function(req, res) {
   req.logOut();
-  res.json({status: "success"});
+  res.redirect("/");
 });
-
 
 export default router;

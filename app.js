@@ -13,7 +13,7 @@ import flash from 'express-flash';
 
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
-import apiRouter from './routes/posts.js';
+import postRouter from './routes/posts.js';
 import profileRouter from './routes/profile.js';
 import db from './db.js';
 
@@ -60,7 +60,7 @@ app.use( function (req, res, next) {
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/api', apiRouter);
+app.use('/posts', postRouter);
 app.use('/profile', profileRouter);
 
 

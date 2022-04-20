@@ -6,7 +6,8 @@ const postSchema = new mongoose.Schema({
   petID: {type: String, required: true},
   description: String,
   start_date: {type: Date, required: true},
-  end_date: {type: Date, required: true}
+  end_date: {type: Date, required: true},
+  img: String
   // img: ?
 })
 
@@ -22,9 +23,9 @@ const petSchema = new mongoose.Schema({
   name: {type: String, required: true},
   type: {type: String, required: true},
   breed: String,
-  size: Number,
+  size: String,
   gender: String,
-  age: Number
+  age: String
   // image
 })
 
