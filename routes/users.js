@@ -81,9 +81,9 @@ router.post("/signin", passport.authenticate('local', {failureRedirect: '/'}), f
   res.json({status: "success", user: req.user});
 });
 
-router.get("/signout", function(req, res) {
+router.post("/signout", function(req, res) {
   req.logOut();
-  res.redirect("/");
+  res.json({status: "success"});
 });
 
 export default router;

@@ -37,12 +37,35 @@ router.post('/', async function(req, res) {
             await newPost.save();
             console.log("saved")
             res.json({'status': 'success'})
-        } catch(err){
-            console.log("backend error")
-            res.json({"status": "error", "error": err})
+        } catch(error){
+            res.json({"status": "error", "error": error})
         }
     }
 });
+
+router.delete('/', async function(req, res) {
+    if(!req.isAuthenticated()){
+        res.json({"status": "error", "error": "not logged in"})
+    } else {
+        try{
+            let postID = req.body.postID
+            let post = await req.db.Post.findById(postID)
+            console.log(postID, post);
+            console.log(req.user._id, post.userID)
+            if(req.user._id.toString() === post.userID){
+                await req.db.Post.deleteOne({ _id: postID });
+                res.json({status: 'success'})
+            } else {
+                res.json({
+                    status: "error",
+                    error: "you can only delete your own posts",
+                  });
+            }
+        } catch(error){
+            res.json({"status": "error", "error": error})
+        }
+    }
+})
 
 router.get('/pets', async function(req, res){
     if(!req.isAuthenticated()){

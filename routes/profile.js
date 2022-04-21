@@ -17,10 +17,12 @@ router.get('/', async function(req, res){
             if(user.pets.length > 0) {
                 pets[0] = await req.db.Pet.findById(user.pets[0])
             }
+            let posts = await req.db.Post.find({userID: userID})
             let userInfo = {
                 username: user.username,
                 contact: user.contact,
-                pets: pets
+                pets: pets,
+                posts: posts
             }
             res.json({"status": "success", "userInfo": userInfo})
         } catch (error) {
