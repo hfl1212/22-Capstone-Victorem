@@ -51,7 +51,6 @@ router.post('/signup', async function(req, res) {
             email: email,
             pets: [],
             contact: {
-              snap: '',
               facebook:'',
               instagram:''
             }
@@ -75,9 +74,6 @@ router.post('/signup', async function(req, res) {
 })
 
 router.post("/signin", passport.authenticate('local', {failureRedirect: '/'}), function(req, res) {
-  // Needs to redirect to either Profile page of the user, or Landing page
-  // Currently not redirecting to anywhere
-  console.log(req.session)
   res.json({status: "success", user: req.user});
 });
 
