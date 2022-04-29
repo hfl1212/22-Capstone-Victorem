@@ -32,19 +32,10 @@ router.post('/signup', async function(req, res) {
       const {username, email, password: plainTextPass} = req.body;
 
       let user = await User.findOne({email});
-    
+      let statusInfo = {}
       if (user) { // User found, redirecting to signin page
-        //req.flash('error', 'Sorry, email has already been registered.');
-        console.log("Sorry, email has been registered.")
-      } else if (email == "" || plainTextPass == "") { // All fields should be filled
-        //req.flash('error', 'Please fill out all the fields.');
-        console.log("Please fill out all the fields.")
-      } else if (!email.includes("@uw.edu")) { // Should use UW email for registration
-        //req.flash("Please register with UW email.")
-        console.log("Please register with UW email.")
-      } else if (plainTextPass.length < 6) { // Password should be longer than 6
-        //req.flash("Password length should be longer than 6.");
-        console.log("Password length should be longer than 6");
+        statusInfo.status = 'error'
+        statusInfo.message = "Sorry, email has been registered."
       } else {
         const newUser = new User({
             username: username,
@@ -53,28 +44,38 @@ router.post('/signup', async function(req, res) {
             contact: {
               facebook:'',
               instagram:''
-            }
+            },
+            isFirstTime: true
         })
         User.register(newUser, plainTextPass, function(err, user) {
-          if (err) {
-            res.json({status: "error", message:"Your account could not be saved. Error: ", err}) 
+          if (err){
+            console.log(err)
+            statusInfo.status = "error"
+            statusInfo.message = err
+          } else{
+            statusInfo.status = "success"
+            statusInfo.message = "Successfully registered! Please log in ..."
           }
+          res.json(statusInfo)
         })
-        //await newUser.save();
-        //req.flash('info', 'Account made, please log in...');
-        console.log("Account made, please log in...")
-        res.json({status: "success", message: "Account made, please log in..."})
       }
   } catch(err){
-      console.log("There is an error")
-      let statusInfo = {'status': 'error'}
-      statusInfo.error = err
-      res.send(err)
+    console.log(err)
+    res.json({'status': 'error', 'message': err})
   }
 })
 
-router.post("/signin", passport.authenticate('local', {failureRedirect: '/'}), function(req, res) {
-  res.json({status: "success", user: req.user});
+router.post('/signin', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err) }
+    if (!user) {
+      return res.json({status: "error", message: info.message })
+    }
+    req.logIn(user, function(err) {
+      if (err) { return next(err); }
+      return res.json({status: "success", user: user})
+    });
+  })(req, res, next);
 });
 
 router.post("/signout", function(req, res) {

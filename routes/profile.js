@@ -22,7 +22,8 @@ router.get('/', async function(req, res){
                 username: user.username,
                 contact: user.contact,
                 pets: pets,
-                posts: posts
+                posts: posts,
+                isFirstTime: user.isFirstTime
             }
             res.json({"status": "success", "userInfo": userInfo})
         } catch (error) {
@@ -39,23 +40,26 @@ router.post('/', async function(req, res){
             let user = await req.db.User.findById(req.user._id)
             user.username = req.body.username
             user.contact = req.body.contact
-
             let newPetInfo = req.body.pets[0]
-            let pet;
-            if(user.pets.length === 0) { // if user added a new pet
-                pet = new req.db.Pet(newPetInfo)
-                user.pets.push(pet._id)
-                pet.userID = req.user._id
-            } else { // if user is modifying existing pet
-                pet = await req.db.Pet.findById(user.pets[0])
-                pet.name = newPetInfo.name
-                pet.type = newPetInfo.type
-                pet.breed = newPetInfo.breed
-                pet.size = newPetInfo.size
-                pet.gender = newPetInfo.gender
-                pet.age = newPetInfo.age
+            if(newPetInfo.name && newPetInfo.type) {
+                let pet;
+                if(user.pets.length === 0) { // if user adding a new pet
+                    pet = new req.db.Pet(newPetInfo)
+                    user.pets.push(pet._id)
+                    pet.userID = req.user._id
+                } else { // if user is modifying existing pet
+                    pet = await req.db.Pet.findById(user.pets[0])
+                    pet.name = newPetInfo.name
+                    pet.type = newPetInfo.type
+                    pet.breed = newPetInfo.breed
+                    pet.size = newPetInfo.size
+                    pet.gender = newPetInfo.gender
+                    pet.age = newPetInfo.age
+                    pet.bio = newPetInfo.bio
+                }
+                await pet.save()
             }
-            await pet.save()
+            user.isFirstTime = false
             await user.save()
             res.json({"status": "success"})
         } catch (error) {
