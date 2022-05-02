@@ -56,11 +56,7 @@ router.post('/signup', async function(req, res) {
               instagram:''
             }
         })
-        User.register(newUser, plainTextPass, function(err, user) {
-          if (err) {
-            res.json({status: "error", message:"Your account could not be saved. Error: ", err}) 
-          }
-        })
+        User.register(newUser, plainTextPass)
         //await newUser.save();
         //req.flash('info', 'Account made, please log in...');
         console.log("Account made, please log in...")
