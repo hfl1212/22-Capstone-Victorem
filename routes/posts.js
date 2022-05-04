@@ -13,7 +13,7 @@ router.get('/', async function(req, res, next) {
             onePost.start_date = post.start_date
             onePost.end_date = post.end_date
             onePost.description = post.description
-            onePost.img = post.img
+            // onePost.img = post.img
             return onePost
         }))
         res.json(postsJson)
@@ -36,15 +36,15 @@ router.post('/', async function(req, res) {
                     petID: req.user.pets[0],
                     start_date: req.body.start_date,
                     end_date: req.body.end_date,
-                    description: req.body.description,
-                    img: req.body.img
+                    description: req.body.description
+                    // img: req.body.img
                 })
             } else { // editing old post
                 post = await req.db.Post.findById(req.body.postID)
                 post.start_date = req.body.start_date
                 post.end_date = req.body.end_date
                 post.description = req.body.description
-                post.img = req.body.img
+                // post.img = req.body.img
             }
             await post.save();
             res.json({'status': 'success'})

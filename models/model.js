@@ -6,16 +6,14 @@ const postSchema = new mongoose.Schema({
   petID: {type: String, required: true},
   description: String,
   start_date: {type: Date, required: true},
-  end_date: {type: Date, required: true},
-  img: String
-  // img: ?
+  end_date: {type: Date, required: true}
 })
 
 const userSchema = new mongoose.Schema({
-  username: String,
+  username: {type: String, required: true},
   email: {type: String, required: true, unique: true},
+  profilePhoto: String,
   pets: [String],
-  // profile picture
   contact: Object,
   isFirstTime: Boolean
 })
@@ -23,12 +21,12 @@ const userSchema = new mongoose.Schema({
 const petSchema = new mongoose.Schema({
   name: {type: String, required: true},
   type: {type: String, required: true},
+  img: [String],
   breed: String,
   size: String,
   gender: String,
   age: String,
   bio: String
-  // image
 })
 
 userSchema.plugin(passportLocalMongoose, {usernameField: "email"});
