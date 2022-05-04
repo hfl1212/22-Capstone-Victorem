@@ -1,4 +1,8 @@
 import express from 'express';
+import MulterGridfsStorage, { GridFsStorage } from "multer-gridfs-storage";
+import multer from 'multer';
+import conn from '../db.js';
+
 var router = express.Router();
 
 router.get('/', async function(req, res){
@@ -12,6 +16,7 @@ router.get('/', async function(req, res){
             userID = req.query.user
         }
         try {
+            console.log(req.db)
             let user = await req.db.User.findById(userID)
             let pets = [{}]
             if(user.pets.length > 0) {
@@ -22,10 +27,12 @@ router.get('/', async function(req, res){
                 username: user.username,
                 contact: user.contact,
                 pets: pets,
-                posts: posts
+                posts: posts,
+                isFirstTime: user.isFirstTime
             }
             res.json({"status": "success", "userInfo": userInfo})
         } catch (error) {
+            console.log(error)
             res.json({"status": "error", "error": "User not found!"})
         }
     }
@@ -39,23 +46,26 @@ router.post('/', async function(req, res){
             let user = await req.db.User.findById(req.user._id)
             user.username = req.body.username
             user.contact = req.body.contact
-
             let newPetInfo = req.body.pets[0]
-            let pet;
-            if(user.pets.length === 0) { // if user added a new pet
-                pet = new req.db.Pet(newPetInfo)
-                user.pets.push(pet._id)
-                pet.userID = req.user._id
-            } else { // if user is modifying existing pet
-                pet = await req.db.Pet.findById(user.pets[0])
-                pet.name = newPetInfo.name
-                pet.type = newPetInfo.type
-                pet.breed = newPetInfo.breed
-                pet.size = newPetInfo.size
-                pet.gender = newPetInfo.gender
-                pet.age = newPetInfo.age
+            if(newPetInfo.name && newPetInfo.type) {
+                let pet;
+                if(user.pets.length === 0) { // if user adding a new pet
+                    pet = new req.db.Pet(newPetInfo)
+                    user.pets.push(pet._id)
+                    pet.userID = req.user._id
+                } else { // if user is modifying existing pet
+                    pet = await req.db.Pet.findById(user.pets[0])
+                    pet.name = newPetInfo.name
+                    pet.type = newPetInfo.type
+                    pet.breed = newPetInfo.breed
+                    pet.size = newPetInfo.size
+                    pet.gender = newPetInfo.gender
+                    pet.age = newPetInfo.age
+                    pet.bio = newPetInfo.bio
+                }
+                await pet.save()
             }
-            await pet.save()
+            user.isFirstTime = false
             await user.save()
             res.json({"status": "success"})
         } catch (error) {
@@ -84,6 +94,14 @@ router.post('/pet', async function(req, res){
             res.json({"status": "error", "error": error})
         }
     }
+})
+
+const storage = new GridFsStorage( {url: "mongodb+srv://me:victorem@cluster0.jaf1k.mongodb.net/victorem?retryWrites=true&w=majority"} )
+
+const upload = multer({ storage })
+
+router.post('/upload', upload.single('file'), async function(req, res) {
+    res.json({file: req.file})
 })
 
 export default router;

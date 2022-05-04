@@ -16,7 +16,8 @@ const userSchema = new mongoose.Schema({
   email: {type: String, required: true, unique: true},
   pets: [String],
   // profile picture
-  contact: Object
+  contact: Object,
+  isFirstTime: Boolean
 })
 
 const petSchema = new mongoose.Schema({
@@ -25,7 +26,8 @@ const petSchema = new mongoose.Schema({
   breed: String,
   size: String,
   gender: String,
-  age: String
+  age: String,
+  bio: String
   // image
 })
 

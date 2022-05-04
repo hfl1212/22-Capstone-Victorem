@@ -8,7 +8,6 @@ import bodyParser from 'body-parser';
 import {default as connectMongoDBSession} from 'connect-mongodb-session';
 import passport from 'passport';
 
-
 import flash from 'express-flash';
 
 import indexRouter from './routes/index.js';
@@ -32,6 +31,8 @@ var SessionStore = new MongoDBSession({
     uri: mongoURI,
     collection: 'sessions'
   })
+
+
 
 app.use(logger('dev'));
 app.use(express.json());
