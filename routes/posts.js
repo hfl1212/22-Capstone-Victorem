@@ -8,6 +8,7 @@ router.get('/', async function(req, res, next) {
             let onePost = {}
             let pet = await req.db.Pet.findById(post.petID)
             onePost.pet = pet
+            onePost.postID = post._id
             onePost.userID = post.userID
             onePost.start_date = post.start_date
             onePost.end_date = post.end_date
@@ -26,16 +27,26 @@ router.post('/', async function(req, res) {
         res.json({"status": "error", "error": "not logged in"})
     } else {
         try{
-            const newPost = new req.db.Post({
-                userID: req.user._id,
-                petID: req.user.pets[0],
-                start_date: req.body.start_date,
-                end_date: req.body.end_date,
-                description: req.body.description,
-                img: req.body.img
-            })
-            await newPost.save();
-            console.log("saved")
+            let postID = req.body.postID
+            console.log("postId: " + req.body.postID)
+            let post
+            if(!postID) { // creating new post
+                post = new req.db.Post({
+                    userID: req.user._id,
+                    petID: req.user.pets[0],
+                    start_date: req.body.start_date,
+                    end_date: req.body.end_date,
+                    description: req.body.description,
+                    img: req.body.img
+                })
+            } else { // editing old post
+                post = await req.db.Post.findById(req.body.postID)
+                post.start_date = req.body.start_date
+                post.end_date = req.body.end_date
+                post.description = req.body.description
+                post.img = req.body.img
+            }
+            await post.save();
             res.json({'status': 'success'})
         } catch(error){
             res.json({"status": "error", "error": error})
@@ -50,8 +61,6 @@ router.delete('/', async function(req, res) {
         try{
             let postID = req.body.postID
             let post = await req.db.Post.findById(postID)
-            console.log(postID, post);
-            console.log(req.user._id, post.userID)
             if(req.user._id.toString() === post.userID){
                 await req.db.Post.deleteOne({ _id: postID });
                 res.json({status: 'success'})
