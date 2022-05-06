@@ -52,7 +52,7 @@ app.use(sessions({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static(path.join(__dirname, 'build')));
 app.use( function (req, res, next) {
     req.db = db;
     next();
@@ -64,7 +64,7 @@ app.use('/posts', postRouter);
 app.use('/profile', profileRouter);
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname + '../client/build', 'index.html'))
+    res.sendFile(path.join(__dirname + 'build/index.html'))
 })
 
 
