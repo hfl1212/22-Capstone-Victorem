@@ -20,6 +20,7 @@ router.get('/', async function(req, res){
             let posts = await req.db.Post.find({userID: userID})
             let userInfo = {
                 username: user.username,
+                profilePhoto: user.profilePhoto,
                 contact: user.contact,
                 pets: pets,
                 posts: posts,
@@ -39,6 +40,7 @@ router.post('/', async function(req, res){
         try {
             let user = await req.db.User.findById(req.user._id)
             user.username = req.body.username
+            user.profilePhoto = req.body.profilePhoto
             user.contact = req.body.contact
             let newPetInfo = req.body.pets[0]
             if(newPetInfo.name && newPetInfo.type) {
@@ -56,6 +58,7 @@ router.post('/', async function(req, res){
                     pet.gender = newPetInfo.gender
                     pet.age = newPetInfo.age
                     pet.bio = newPetInfo.bio
+                    pet.img = newPetInfo.img
                 }
                 await pet.save()
             }
