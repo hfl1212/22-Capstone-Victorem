@@ -50,7 +50,6 @@ const CreatePostModal = (props) => {
               closeCreatePostModal();
               window.location.reload(false)
             }
-            closeCreatePostModal();
           }
         } catch (error) {
           console.log("There was an error: " + error);
@@ -70,7 +69,7 @@ const CreatePostModal = (props) => {
                     src={closeIcon}
                     onClick={closeCreatePostModal}
                 />
-                <h1 className="modal-title mx-auto">Create a post</h1>
+                <h1 className="modal-title mx-auto">Create a Request</h1>
                 
                 </div>
                 <span id="create_post_message"></span>
@@ -92,16 +91,6 @@ const CreatePostModal = (props) => {
                     <input type="date" className="form__input" id="end_date" min={today}></input>
                     <div className="form__input-error-message"></div>
                 </div>
-                {/* <div className="form__input-group">
-                    <label htmlFor="petPhoto">Pet Photo</label>
-                    <input type="file" className="form__input" id="petPhoto"></input>
-                    <div className="form__input-error-message"></div>
-                </div> */}
-                {/* <div className="form__input-group">
-                    <label htmlFor="img_link">Image Link</label>
-                    <input type="text" className="form__input" id="img_link"></input>
-                    <div className="form__input-error-message"></div>
-                </div> */}
                 <div className="form__input-group">
                     <label htmlFor="description">Description</label>
                     <textarea className="form__input" id="description"></textarea>
@@ -119,7 +108,7 @@ const CreatePostModal = (props) => {
             </div>
             </div>
         </section>
-  );
+    );
 };
 
 export default CreatePostModal;

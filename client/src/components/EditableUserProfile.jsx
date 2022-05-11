@@ -1,12 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import facebook from "../photos/facebook2.png";
 import instagram from "../photos/instagram.png";
-// import pet1 from "../photos/pet1.jpg";
-// import pet2 from "../photos/pet2.jpg";
-// import pet3 from "../photos/pet3.jpg";
-// import pet4 from "../photos/pet4.jpg";
-import add from "../photos/add.png";
-import wuyanzu from "../photos/wuyanzu.png";
+import defaultUser from "../photos/default-user.jpg";
 import React from "react";
 
 export default function EditableUserProfile({ stored, editCompleteCallback }) {
@@ -57,6 +52,7 @@ export default function EditableUserProfile({ stored, editCompleteCallback }) {
       let statusInfo = await postProfileResponse.json();
       if(statusInfo.status === "success"){
         window.localStorage.setItem('username', username)
+        document.getElementById("hello-message").textContent = "Hello, " + window.localStorage.username + "!"
         alert("profile saved successfully")
         editCompleteCallback(profileInput);
       } else{
@@ -65,30 +61,6 @@ export default function EditableUserProfile({ stored, editCompleteCallback }) {
     } else {
       document.getElementById("error-message").innerHTML = "Please fix the error above"
     }
-  }
-
-  // function uploadPhoto(e) {
-  //   console.log("e===========", e.target.file);
-
-  //   var file = e.target.files[0];
-  //   let r = new FileReader(); 
-  //   r.onload = function () {
-  //     console.log(r.result); 
-  //     profileInput.headimg = r.result;
-  //   };
-  //   r.readAsDataURL(file);
-  // }
-
-  function uploadPet(e, index) {
-    console.log("e===========", e.target.file);
-
-    var file = e.target.files[0];
-    let r = new FileReader(); 
-    r.onload = function () {
-      console.log(r.result); 
-      profileInput["pet" + index] = r.result;
-    };
-    r.readAsDataURL(file);
   }
 
   return (
@@ -120,7 +92,7 @@ export default function EditableUserProfile({ stored, editCompleteCallback }) {
         <img
           alt="profile Photo"
           style={{ width: 100, height: 100, margin: 10, borderRadius: 50 }}
-          src={profileInput.profilePhoto || wuyanzu}
+          src={profileInput.profilePhoto || defaultUser}
         ></img>
       </div>
 
@@ -229,7 +201,8 @@ export default function EditableUserProfile({ stored, editCompleteCallback }) {
         <div className="profile-edit-row-name">Pet Size:</div>
         <input
           className="pet-info-input"
-          type="int"
+          type="text"
+          placeholder="e.g. 10 lbs"
           value={profileInput.pets[0].size}
           onChange={(e) => {
             profileInput.pets[0].size = e.target.value;
@@ -238,16 +211,20 @@ export default function EditableUserProfile({ stored, editCompleteCallback }) {
         />
       </div>
       <div className="profile-edit-row">
-        <div className="profile-edit-row-name">Pet Gender:</div>
-        <input
-          className="pet-info-input"
-          type="text"
+        <div className="profile-edit-row-name">
+          Pet Gender: 
+          <select 
+          name="pet-gender"
           value={profileInput.pets[0].gender}
           onChange={(e) => {
             profileInput.pets[0].gender = e.target.value;
             setProfileInput({ ...profileInput })
           }}
-        />
+        >
+          <option value="female">female</option>
+          <option value="male">male</option>
+        </select>
+        </div>
       </div>
 
       <div className="profile-edit-row">
@@ -255,6 +232,7 @@ export default function EditableUserProfile({ stored, editCompleteCallback }) {
         <input
           className="pet-info-input"
           type="text"
+          placeholder="e.g. 8 months"
           value={profileInput.pets[0].age}
           onChange={(e) => {
             profileInput.pets[0].age = e.target.value;

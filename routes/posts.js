@@ -82,8 +82,18 @@ router.get('/pets', async function(req, res){
     } else {
         try {
             let user = req.user
-            let petInfo = await req.db.Pet.findById(user.pets[0])
-            res.json({"status": "success", "pets": [petInfo]})
+            let statusInfo = {};
+            let post = await req.db.Post.findOne({userID: user._id})
+            if(!post) {
+                let petInfo = await req.db.Pet.findById(user.pets[0])
+                statusInfo.status = "success"
+                statusInfo.pets = [petInfo]
+                console.log(statusInfo);
+            } else {
+                statusInfo.status = "error"
+                statusInfo.error = "You have an on-going post! Please resolve it before creating a new one."
+            }
+            res.json(statusInfo)
         } catch (error) {
             res.json({"status": "error", "error": error})
         }

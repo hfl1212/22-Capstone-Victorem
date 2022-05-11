@@ -6,7 +6,7 @@ const postSchema = new mongoose.Schema({
   petID: {type: String, required: true},
   description: String,
   start_date: {type: Date, required: true},
-  end_date: {type: Date, required: true}
+  end_date: {type: Date, required: true} // change name to expireAt if need to automatically delete
 })
 
 const userSchema = new mongoose.Schema({

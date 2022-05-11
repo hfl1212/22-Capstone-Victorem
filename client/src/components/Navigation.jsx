@@ -72,7 +72,7 @@ const Navigation = () => {
                   }
                 >
                   <Link className="nav-link" to="/posts">
-                    Post
+                    Request
                   </Link>
                 </li>
                 {isLoggedIn ? (<>
@@ -90,7 +90,7 @@ const Navigation = () => {
               </ul>
               <div className="nav-item active" id="identity_div">
                 {isLoggedIn ? (<>
-                  <p> Hello, {window.localStorage.username}!</p>
+                  <p id="hello-message"> Hello, {window.localStorage.username}!</p>
                   <button className="btn btn-danger" onClick={signOut}>
                     Sign out
                   </button>

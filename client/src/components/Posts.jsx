@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Copyright from "./Copyright";
+import Footer from "./Footer";
 import PostCard from "./PostCard";
 import CreatePostModal from "./CreatePostModal";
 import plusIcon from "../photos/icons8-plus-64.png";
@@ -65,58 +65,61 @@ const Posts = () => {
           alert('You must log in to create a post!')
           // prompt log in
         } else {
+          console.log(petsJson)
           alert("Error: " + petsJson.error)
         }
       }
   }
 
   return (
-    <main id="posts">
-      <h1 className="post-title">Sitting Posts</h1>
-      <div>{postCardElements}</div>
-      <Copyright />
-      <img
-        onClick={createPost}
-        className="icon"
-        role="button"
-        alt="Add a Post"
-        src={plusIcon}
-      />
-      <CreatePostModal />
-      <nav className="page-nav" aria-label="Page navigation">
-        <div>
-          <ul className="pagination">
-            <li className="page-item">
-              <span className="page-link" onClick={() => setPage(page - 1)}>
-                Previous
-              </span>
-            </li>
-            <li className="page-item">
-              <span className="page-link" onClick={() => setPage(1)}>
-                1
-              </span>
-            </li>
-            <li className="page-item">
-              <span className="page-link" onClick={() => setPage(2)}>
-                2
-              </span>
-            </li>
-            <li className="page-item">
-              <span className="page-link" onClick={() => setPage(3)}>
-                3
-              </span>
-            </li>
-            <li className="page-item">
-              <span className="page-link" onClick={() => setPage(page + 1)}>
-                Next
-              </span>
-            </li>
-          </ul>
-        </div>
-      </nav>
+    <div id="post-page">
+      <main id="posts">
+        <h1 className="post-title">Sitting Requests</h1>
+        <div className="post-card-container">{postCardElements}</div>
+        {/* <Copyright /> */}
+        <img
+          onClick={createPost}
+          className="icon"
+          role="button"
+          alt="Add a Post"
+          src={plusIcon}
+        />
+        <CreatePostModal />
+        <nav className="page-nav" aria-label="Page navigation">
+          <div>
+            <ul className="pagination">
+              <li className="page-item">
+                <span className="page-link" onClick={() => setPage(page - 1)}>
+                  Previous
+                </span>
+              </li>
+              <li className="page-item">
+                <span className="page-link" onClick={() => setPage(1)}>
+                  1
+                </span>
+              </li>
+              <li className="page-item">
+                <span className="page-link" onClick={() => setPage(2)}>
+                  2
+                </span>
+              </li>
+              <li className="page-item">
+                <span className="page-link" onClick={() => setPage(3)}>
+                  3
+                </span>
+              </li>
+              <li className="page-item">
+                <span className="page-link" onClick={() => setPage(page + 1)}>
+                  Next
+                </span>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        {/* <Footer /> */}
+      </main>
       
-    </main>
-    
+    </div>
   );
 };
 

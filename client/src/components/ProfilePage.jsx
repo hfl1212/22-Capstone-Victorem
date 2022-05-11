@@ -2,16 +2,8 @@ import { useEffect, useState } from "react";
 import {useHistory} from "react-router";
 import EditableUserProfile from "./EditableUserProfile";
 import UserProfile from "./UserProfile";
-import wuyanzu from "../photos/wuyanzu.png";
 import React from "react";
-import facebook from "../photos/facebook2.png";
-import instagram from "../photos/instagram.png";
-import pet1 from "../photos/pet1.jpg";
-import pet2 from "../photos/pet2.jpg";
-import pet3 from "../photos/pet3.jpg";
-import pet4 from "../photos/pet4.jpg";
-import add from "../photos/add.png";
-import Copyright from "./Copyright";
+import Footer from "./Footer";
 
 function Profile() {
   const history = useHistory()
@@ -51,28 +43,31 @@ function Profile() {
   }
 
   return (
-    <div className="SideProfile">
-      <div className="App">
-        {loading ? (<><h1>Loading</h1></>) : (<>
-        {profileEditMode ? (
-          <>
-            <h1 className="profileheader">My Profile</h1>
-            <EditableUserProfile
-              stored={userInfo}
-              editCompleteCallback={handleEditComplete}
-            />
-          </>
-        ) : (
-          <>
-            <UserProfile
-              stored={userInfo}
-              startEditCallback={() => setProfileEditMode(true)}
-            />
-          </>
-        )}</>)}
+    <div>
+      <div className="SideProfile">
+        <div className="App">
+          {loading ? (<><h1>Loading</h1></>) : (<>
+          {profileEditMode ? (
+            <>
+              <h1 className="profileheader">My Profile</h1>
+              <EditableUserProfile
+                stored={userInfo}
+                editCompleteCallback={handleEditComplete}
+              />
+            </>
+          ) : (
+            <>
+              <UserProfile
+                stored={userInfo}
+                startEditCallback={() => setProfileEditMode(true)}
+              />
+            </>
+          )}</>)}
+          
+        </div>
         
       </div>
-      <Copyright />
+      <Footer />
     </div>
   );
 }
