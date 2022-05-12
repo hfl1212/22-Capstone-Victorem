@@ -375,7 +375,7 @@ div .sticky {
 
 .post-card-description {
   font-size: 14px;
-  height: 83.99px;
+  height: 67px;
   margin-top: 10px;
   overflow: auto;
 }
@@ -386,8 +386,8 @@ div .sticky {
 
 .post-card-action-icon {
   margin: 5px;
-  position: relative;
-  top: 10%;
+  /* position: relative;
+  top: 10%; */
 }
 
 .icon {

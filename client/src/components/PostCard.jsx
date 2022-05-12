@@ -51,7 +51,7 @@ const PostCard = (props) => {
       } else {
         alert("Successfully deleted your post!");
         // window.location.reload(false); // possibly need to create a state for reload.
-        props.handleNewPost()
+        props.handlePostChange()
       }
     } catch (error) {
       console.log("error:" + error);

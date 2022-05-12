@@ -6,6 +6,7 @@ import facebook from "../photos/facebook2.png";
 import instagram from "../photos/instagram.png";
 import report from "../photos/report.png"
 import CreatePostModal from "./CreatePostModal";
+import { useState } from "react";
 
 import { Navigation, Pagination, Autoplay } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -17,7 +18,7 @@ import "swiper/css/autoplay";
 export default function UserProfile({ stored, startEditCallback }) {
   const url = window.location.href
   // console.log(stored.profilePhoto);
-  let post = stored.posts[0]
+  const [post, setPost] = useState(stored.posts[0])
 
   let loggedInUser = window.localStorage.getItem("userID")
   let renderedUser
@@ -41,6 +42,10 @@ export default function UserProfile({ stored, startEditCallback }) {
     setTimeout(() => {
       reportModal.classList.add("show");
     }, 25);
+  }
+
+  function handlePostChange() {
+    setPost(null)
   }
 
   return (
@@ -258,6 +263,7 @@ export default function UserProfile({ stored, startEditCallback }) {
                   description={post.description}
                   img={pet.img[0]}
                   renderEdit={isOwnProfile}
+                  handlePostChange={handlePostChange}
                 />
               </div>
             </>

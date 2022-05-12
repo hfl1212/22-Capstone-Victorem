@@ -23,13 +23,14 @@ const Posts = () => {
 
   function handleNewPost() {
     setPostChange(!postChange)
+    setPage(1)
   }
 
   const postCardElements = [];
-  const start = Math.min((page - 1) * MAX_ITEMS_PER_PAGE, postCardData.length);
-  const end = Math.min(page * MAX_ITEMS_PER_PAGE, postCardData.length);
+  const start = postCardData.length - (page - 1) * MAX_ITEMS_PER_PAGE - 1
+  const diff = Math.min(MAX_ITEMS_PER_PAGE, postCardData.length - (page - 1) * MAX_ITEMS_PER_PAGE);
 
-  for (let i = end - 1; i >= start; i--) {
+  for (let i = start; i > start - diff; i--) {
     postCardElements.push(
       <PostCard
         postID={postCardData[i].postID}
