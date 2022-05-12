@@ -1,7 +1,9 @@
 import React from "react";
 import closeIcon from "../photos/icons8-close-16.png";
+import { useHistory } from "react-router";
 
 const CreatePostModal = (props) => {
+  const history = useHistory()
 
     function closeCreatePostModal() {
         const createPostModal = document.getElementById("createPostModal");
@@ -20,8 +22,7 @@ const CreatePostModal = (props) => {
           let description = document.getElementById("description").value;
           let postID = document.getElementById("postID").value
           // store the image
-          
-          console.log(props)
+
           if(pet_name === "add") {
             document.getElementById("create_post_message").textContent = "Please add a pet in your profile!"
           } else if(end_date < start_date || start_date == '' || end_date == '') {
@@ -48,7 +49,7 @@ const CreatePostModal = (props) => {
               document.getElementById("end_date").innerHTML = "";
               alert("Successfully uploaded!");
               closeCreatePostModal();
-              window.location.reload(false)
+              props.handleNewPost()
             }
           }
         } catch (error) {

@@ -23,9 +23,10 @@ const Footer = () => {
           <div class="col-xs-6 col-md-3">
             <h6>Links</h6>
             <ul class="footer-links">
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Contact Us</a></li>
-              <li><a href="#">Github</a></li>
+              <li><a href="http://pawdyuw.com/">About Us</a></li>
+              <li><a href = "mailto: wzywzywork@163.com">Contact us</a></li>
+              <li><a href="https://github.com/hfl1212/22-Capstone-Victorem">Github Page</a></li>
+              <li><a href="#">2022 iSchool Capstone</a></li>
             </ul>
           </div>
         </div>

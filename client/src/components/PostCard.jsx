@@ -6,6 +6,10 @@ import editIcon from "../photos/icons8-edit-16.png";
 const PostCard = (props) => {
   const history = useHistory();
   let renderEdit = (props.userID === window.localStorage.getItem("userID"))
+  // console.log(window.location);
+  if(window.location.href.endsWith("/posts")) {
+    renderEdit = false
+  }
   let cleanStart = new Date(props.start_date).toISOString().split('T')[0]
   let cleanEnd = new Date(props.end_date).toISOString().split('T')[0]
 
@@ -18,38 +22,20 @@ const PostCard = (props) => {
   }
 
   async function editPost() {
-    let petsJson
-      try {
-        let response = await fetch('/posts/pets')
-        petsJson = await response.json()
-      } catch (error) {
-        petsJson = {status: "error", error: error}
-      }
-      if(petsJson.status === "success"){
-        // I have no idea why but these next lines have to exist together to make it work
-        const createPostModal = document.getElementById("createPostModal");
-        setTimeout(() => {
-          createPostModal.classList.add("show");
-        }, 25);
-        createPostModal.style.display = "block";
-        // ends here
+    // I have no idea why but these next lines have to exist together to make it work
+    const createPostModal = document.getElementById("createPostModal");
+    setTimeout(() => {
+      createPostModal.classList.add("show");
+    }, 25);
+    createPostModal.style.display = "block";
+    // ends here
 
-        let petsOptions = petsJson.pets.map(pet => {
-          return `<option value="${pet.name}">${pet.name}</option>`
-        });
-        document.getElementById("pets_dropdown").innerHTML = petsOptions
-        document.getElementById("start_date").valueAsDate = new Date(props.start_date)
-        document.getElementById("end_date").valueAsDate = new Date(props.end_date)
-        document.getElementById("description").value = props.description
-        document.getElementById("postID").value = props.postID
-      } else {
-        if(petsJson.error === "not logged in") {
-          alert('You must log in to create a post!')
-          // prompt log in
-        } else {
-          alert("Error: " + petsJson.error)
-        }
-      }
+    let petsOptions = `<option value="${props.pet_name}">${props.pet_name}</option>`
+    document.getElementById("pets_dropdown").innerHTML = petsOptions
+    document.getElementById("start_date").valueAsDate = new Date(props.start_date)
+    document.getElementById("end_date").valueAsDate = new Date(props.end_date)
+    document.getElementById("description").value = props.description
+    document.getElementById("postID").value = props.postID
   }
 
   async function deletePost() {
@@ -64,7 +50,8 @@ const PostCard = (props) => {
         alert("Error: " + responesJSON.error);
       } else {
         alert("Successfully deleted your post!");
-        window.location.reload(false); // possibly need to create a state for reload.
+        // window.location.reload(false); // possibly need to create a state for reload.
+        props.handleNewPost()
       }
     } catch (error) {
       console.log("error:" + error);
@@ -108,7 +95,6 @@ const PostCard = (props) => {
           <></>
         )}
       </div>
-      
     </div>
   );
 };

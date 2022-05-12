@@ -10,6 +10,7 @@ const MAX_ITEMS_PER_PAGE = 6;
 const Posts = () => {
   const [page, setPage] = useState(1);
   const [postCardData, setPostCardData] = useState({});
+  const [postChange, setPostChange] = useState(false)
 
   useEffect(() => {
     fetch(`/posts`)
@@ -18,7 +19,11 @@ const Posts = () => {
         setPostCardData(data)
         // console.log(data)
       });
-  }, [page])
+  }, [page, postChange])
+
+  function handleNewPost() {
+    setPostChange(!postChange)
+  }
 
   const postCardElements = [];
   const start = Math.min((page - 1) * MAX_ITEMS_PER_PAGE, postCardData.length);
@@ -35,6 +40,7 @@ const Posts = () => {
         end_date={postCardData[i].end_date}
         description={postCardData[i].description}
         img={postCardData[i].pet.img[0]}
+        handleNewPost={handleNewPost}
       />
     );
   }
@@ -84,41 +90,41 @@ const Posts = () => {
           alt="Add a Post"
           src={plusIcon}
         />
-        <CreatePostModal />
-        <nav className="page-nav" aria-label="Page navigation">
-          <div>
-            <ul className="pagination">
-              <li className="page-item">
-                <span className="page-link" onClick={() => setPage(page - 1)}>
-                  Previous
-                </span>
-              </li>
-              <li className="page-item">
-                <span className="page-link" onClick={() => setPage(1)}>
-                  1
-                </span>
-              </li>
-              <li className="page-item">
-                <span className="page-link" onClick={() => setPage(2)}>
-                  2
-                </span>
-              </li>
-              <li className="page-item">
-                <span className="page-link" onClick={() => setPage(3)}>
-                  3
-                </span>
-              </li>
-              <li className="page-item">
-                <span className="page-link" onClick={() => setPage(page + 1)}>
-                  Next
-                </span>
-              </li>
-            </ul>
-          </div>
-        </nav>
-        {/* <Footer /> */}
+        <CreatePostModal handleNewPost={handleNewPost}/>
+        
       </main>
-      
+      <nav className="page-nav" aria-label="Page navigation">
+            <div>
+              <ul className="pagination">
+                <li className="page-item">
+                  <span className="page-link" onClick={() => setPage(page - 1)}>
+                    Previous
+                  </span>
+                </li>
+                <li className="page-item">
+                  <span className="page-link" onClick={() => setPage(1)}>
+                    1
+                  </span>
+                </li>
+                <li className="page-item">
+                  <span className="page-link" onClick={() => setPage(2)}>
+                    2
+                  </span>
+                </li>
+                <li className="page-item">
+                  <span className="page-link" onClick={() => setPage(3)}>
+                    3
+                  </span>
+                </li>
+                <li className="page-item">
+                  <span className="page-link" onClick={() => setPage(page + 1)}>
+                    Next
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </nav>
+      <Footer />
     </div>
   );
 };

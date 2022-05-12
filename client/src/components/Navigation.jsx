@@ -72,7 +72,7 @@ const Navigation = () => {
                   }
                 >
                   <Link className="nav-link" to="/posts">
-                    Request
+                    Requests
                   </Link>
                 </li>
                 {isLoggedIn ? (<>

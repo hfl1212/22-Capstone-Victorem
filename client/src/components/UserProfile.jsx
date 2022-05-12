@@ -5,6 +5,7 @@ import defaultUser from "../photos/default-user.jpg";
 import facebook from "../photos/facebook2.png";
 import instagram from "../photos/instagram.png";
 import report from "../photos/report.png"
+import CreatePostModal from "./CreatePostModal";
 
 import { Navigation, Pagination, Autoplay } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -276,9 +277,7 @@ export default function UserProfile({ stored, startEditCallback }) {
           <ReportModal />
         </>)}
       </div>
-      {/* <div className="report-container">
-        
-      </div> */}
+      <CreatePostModal />
     </div>
   );
 }

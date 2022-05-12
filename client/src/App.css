@@ -27,9 +27,9 @@ main {
   right: 0;
 }
 
-#posts {
-  position: absolute;
-}
+/* #posts {
+  height: 100vh;
+} */
 
 h1 {
   font-size: 2rem;
@@ -38,11 +38,7 @@ h1 {
 
 #landing-page {
   padding-top: 2rem;
-}
-
-#recycling-guide,
-#posts {
-  padding-top: 6rem;
+  padding-bottom: 2rem;
 }
 
 /* Buttons */
@@ -229,36 +225,9 @@ div .sticky {
   text-decoration: underline;
 }
 
-#posts {
-  padding-bottom: 150px;
-}
-
 /* Footer */
 
-/* footer {
-  bottom: 0;
-  box-shadow: 0 0 5px #f5f5f5;
-  left: 0;
-  margin: 0;
-  text-align: center;
-  width: 100%;
-}
 
-footer em {
-  bottom: 30px;
-  left: 0;
-  width: 100%;
-}
-
-footer {
-  background-color: #f5f5f5;
-  position: fixed;
-  height: 150px;
-}
-
-footer em {
-  position: fixed;
-} */
 
 .site-footer
 {
@@ -268,8 +237,7 @@ footer em {
   line-height:24px;
   color:#737373;
   width: 100%;
-  /* position: relative; */
-  bottom: 0;
+  margin-top: 20px;
 }
 .site-footer hr
 {
@@ -427,23 +395,25 @@ footer em {
 .post-card-action-icon {
   margin: 5px;
   position: relative;
-  /* top: -25px; */
+  top: 10%;
 }
 
 .icon {
-  --margin: 30px;
+  --margin: 20px;
 
   bottom: var(--margin);
   cursor: pointer;
-  position: fixed;
+  float: right;
   right: var(--margin);
 }
 
 .page-nav {
-  bottom: 80px;
+  bottom: 0;
+
   left: 0;
-  position: fixed;
   width: 100%;
+  margin: 30px 0 30px 0;
+  /* position: absolute; */
 }
 
 .page-nav > div {
@@ -917,6 +887,11 @@ span {
   #report-button {
     height: 60px;
     width: 60px;
+  }
+
+  .icon {
+    width: 50px;
+    height: 50px;
   }
 }
 
