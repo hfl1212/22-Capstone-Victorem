@@ -246,7 +246,16 @@ export default function UserProfile({ stored, startEditCallback }) {
               </div>
             </div>
           </>
-        ) : (<></>)}
+        ) : (<>
+          <img
+            id="report-button"
+            onClick={handleReport}
+            role="button"
+            alt="Report this user"
+            src={report}
+          />
+          <ReportModal />
+        </>)}
 
         <div className="profile-con">
           {post ? (
@@ -273,16 +282,10 @@ export default function UserProfile({ stored, startEditCallback }) {
         </div>
 
         {isOwnProfile ? (<></>) : (<>
-          <img
-          id="report-button"
-          onClick={handleReport}
-          role="button"
-          alt="Report this user"
-          src={report}
-          />
-          <ReportModal />
+          
         </>)}
       </div>
+      
       <CreatePostModal />
     </div>
   );

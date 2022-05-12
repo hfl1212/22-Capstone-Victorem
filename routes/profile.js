@@ -93,4 +93,31 @@ router.post('/pet', async function(req, res){
     }
 })
 
+router.get('/user', async function(req, res) {
+    if(!req.isAuthenticated()){
+        res.json({"status": "error", "error": "not logged in"})
+    } else {
+        let userID = req.query.user
+        try {
+            let user = await req.db.User.findById(userID)
+            let pets = [{}]
+            if(user.pets.length > 0) {
+                pets[0] = await req.db.Pet.findById(user.pets[0])
+            }
+            let posts = await req.db.Post.find({userID: userID})
+            let userInfo = {
+                username: user.username,
+                profilePhoto: user.profilePhoto,
+                contact: user.contact,
+                pets: pets,
+                posts: posts,
+                isFirstTime: user.isFirstTime
+            }
+            res.json({"status": "success", "userInfo": userInfo})
+        } catch (error) {
+            res.json({"status": "error", "error": "User not found!"})
+        }
+    }
+})
+
 export default router;

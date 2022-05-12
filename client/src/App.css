@@ -295,6 +295,7 @@ div .sticky {
   border-radius: 100%;
   background-color: #33353d;
 }
+
 .copyright-text {
   margin: 0;
   text-align: left;
@@ -733,18 +734,6 @@ span {
 }
 
 /* Media Queries */
-@media only screen and (min-width: 600px) {
-  /* .icon {
-          margin-left: 5px;
-          max-width: 6%;
-          max-height: 6%;
-      }
-      .icon-in-full-post {
-          margin-left: 5px;
-          max-width: 3%;
-          max-height: 3%;
-      } */
-}
 
 @media (min-width: 992px) {
   #home {
@@ -821,7 +810,7 @@ span {
     flex-direction: column;
     padding: 0px 30px;
   }
-  .profile-wrapper {
+  .profile-row {
     display: none;
   }
   .profile-con {
@@ -869,10 +858,12 @@ span {
   }
 }
 
-/* #report-button {
-    height: 60px;
-    width: 60px;
-  } */
+#report-button {
+  float: right;
+  height: 60px;
+  width: 60px;
+}
+
 @media (max-width: 991px) {
   .site-footer [class^="col-"] {
     margin-bottom: 30px;
@@ -951,5 +942,9 @@ span {
     display: block;
     margin-right: 0;
     font-weight: 600;
+  }
+
+  .copyright-text {
+    text-align: center;
   }
 }
