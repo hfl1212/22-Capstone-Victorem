@@ -2,15 +2,18 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer class="site-footer">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-12 col-md-6">
+    <footer className="site-footer">
+      <div className="container">
+        <div className="row">
+          <div className="col-sm-12 col-md-6">
             <h6>About</h6>
-            <p class="text-justify">Pawdy is developed by Team Victorem at the Information School of the University of Washington.</p>
+            <p className="text-justify">
+              Pawdy is developed by Team Victorem at the Information School of
+              the University of Washington.
+            </p>
           </div>
 
-          <div class="col-xs-6 col-md-3">
+          <div className="col-xs-6 col-md-3">
             <h6>Team members</h6>
             <ul class="footer-links">
               <li>Jiezhen Chen</li>
@@ -34,8 +37,7 @@ const Footer = () => {
       <div class="container">
         <div class="row">
           <div class="col-md-8 col-sm-6 col-xs-12">
-            <p class="copyright-text">Copyright &copy; Team-Victorem 2022
-            </p>
+            <p class="copyright-text">Copyright &copy; Team-Victorem 2022</p>
           </div>
 
           {/* <div class="col-md-4 col-sm-6 col-xs-12">
@@ -48,7 +50,7 @@ const Footer = () => {
           </div> */}
         </div>
       </div>
-  </footer>
+    </footer>
   );
 };
 

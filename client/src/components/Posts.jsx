@@ -5,7 +5,7 @@ import CreatePostModal from "./CreatePostModal";
 import plusIcon from "../photos/icons8-plus-64.png";
 import { useEffect } from "react";
 
-const MAX_ITEMS_PER_PAGE = 6;
+const MAX_ITEMS_PER_PAGE = 4;
 
 const Posts = () => {
   const [page, setPage] = useState(1);
@@ -16,7 +16,7 @@ const Posts = () => {
     fetch(`/posts`)
       .then((response) => response.json())
       .then(function (data) {
-        setPostCardData(data)
+        setPostCardData(data);
         // console.log(data)
       });
   }, [page, postChange])
@@ -45,36 +45,36 @@ const Posts = () => {
     );
   }
 
-  async function createPost () {
-      let petsJson
-      try {
-        let response = await fetch('/posts/pets')
-        petsJson = await response.json()
-      } catch (error) {
-        petsJson = {status: "error", error: error}
-      }
-      if(petsJson.status === "success"){
-        // I have no idea why but these next lines have to exist together to make it work
-        setTimeout(() => {
-          createPostModal.classList.add("show");
-        }, 25);
-        const createPostModal = document.getElementById("createPostModal");
-        createPostModal.style.display = "block";
-        // ends here
+  async function createPost() {
+    let petsJson;
+    try {
+      let response = await fetch("/posts/pets");
+      petsJson = await response.json();
+    } catch (error) {
+      petsJson = { status: "error", error: error };
+    }
+    if (petsJson.status === "success") {
+      // I have no idea why but these next lines have to exist together to make it work
+      setTimeout(() => {
+        createPostModal.classList.add("show");
+      }, 25);
+      const createPostModal = document.getElementById("createPostModal");
+      createPostModal.style.display = "block";
+      // ends here
 
-        let petsOptions = petsJson.pets.map(pet => {
-          return `<option value="${pet.name}">${pet.name}</option>`
-        });
-        document.getElementById("pets_dropdown").innerHTML = petsOptions
+      let petsOptions = petsJson.pets.map((pet) => {
+        return `<option value="${pet.name}">${pet.name}</option>`;
+      });
+      document.getElementById("pets_dropdown").innerHTML = petsOptions;
+    } else {
+      if (petsJson.error === "not logged in") {
+        alert("You must log in to create a post!");
+        // prompt log in
       } else {
-        if(petsJson.error === "not logged in") {
-          alert('You must log in to create a post!')
-          // prompt log in
-        } else {
-          console.log(petsJson)
-          alert("Error: " + petsJson.error)
-        }
+        console.log(petsJson);
+        alert("Error: " + petsJson.error);
       }
+    }
   }
 
   return (

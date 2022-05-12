@@ -59,12 +59,10 @@ const PostCard = (props) => {
   }
 
   return (
-    <div className="post-card" key={props.pet_name} >
+    <div className="post-card" key={props.pet_name}>
       <div onClick={toUserProfile}>
-        <img className="post-card-image" alt={props.pet_name} src={props.img}/>
-        <div className="post-card-title">
-          {props.pet_name} | {props.pet_type}
-        </div>
+        <img className="post-card-image" alt={props.pet_name} src={props.img} />
+        <div className="post-card-title">{props.pet_name}</div>
         <div className="post-card-subtitle">
           {cleanStart} - {cleanEnd}
         </div>
