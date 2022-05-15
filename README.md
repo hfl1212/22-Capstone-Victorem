@@ -18,6 +18,8 @@ Feature Improvement Steps:
 - Feature 3: Find a sitter - Students without pets should be able to sign up for Pawdy to voluntarily sit pets in need. Pet owners should be able to filter & select different student sitters available with the best match. 
 3. Extend the website to your University of choice(Optional) - You can transition the website to another university by changing the email requirement to the according university email.
 
+Team member: Hongyi Tang, Jiezhen Chen, Hongfei Lin, Zhengyang Wang
+
 
 
 
